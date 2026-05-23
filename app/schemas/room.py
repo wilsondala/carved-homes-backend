@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -24,6 +26,8 @@ class RoomBase(BaseModel):
     gallery_images: str | None = None
     gallery_videos: str | None = None
 
+    upload_folder: str | None = None
+
     has_wifi: bool = True
     has_parking: bool = True
     has_pool: bool = False
@@ -40,6 +44,7 @@ class RoomResponse(RoomBase):
     id: int
     rating_average: float = 0
     rating_count: int = 0
+    created_at: datetime
 
     class Config:
         from_attributes = True

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+from app.api.v1.users import router as users_router
 from app.api.v1.health import router as health_router
 from app.api.v1.rooms import router as rooms_router
 from app.api.v1.bookings import router as bookings_router
@@ -39,4 +39,10 @@ api_router.include_router(
     webhooks_router,
     prefix="/webhooks",
     tags=["Webhooks"]
+)
+
+api_router.include_router(
+    users_router,
+    prefix="/users",
+    tags=["Users"]
 )

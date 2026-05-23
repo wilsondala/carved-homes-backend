@@ -1,4 +1,14 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, Text
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Float,
+    Boolean,
+    Text,
+    DateTime,
+)
+
+from sqlalchemy.sql import func
 
 from app.database.session import Base
 
@@ -30,6 +40,8 @@ class Room(Base):
     gallery_images = Column(Text, nullable=True)
     gallery_videos = Column(Text, nullable=True)
 
+    upload_folder = Column(String, nullable=True)
+
     rating_average = Column(Float, default=0)
     rating_count = Column(Integer, default=0)
 
@@ -39,3 +51,5 @@ class Room(Base):
     has_air_conditioning = Column(Boolean, default=True)
 
     available = Column(Boolean, default=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

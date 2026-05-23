@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.api import api_router
 from app.database.session import Base, engine
@@ -19,6 +20,12 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="app/static/uploads"),
+    name="uploads"
 )
 
 app.include_router(
