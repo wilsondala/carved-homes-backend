@@ -8,6 +8,10 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
 
+    ADMIN_EMAIL: str = "admin@carvedhomes.com"
+    ADMIN_PASSWORD: str = "123456"
+    SECRET_KEY: str = "carved-homes-secret-key"
+
     SECRET_KEY: str = "super_secret_key"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60

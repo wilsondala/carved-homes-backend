@@ -8,6 +8,18 @@ from app.schemas.booking import BookingCreate, BookingResponse
 router = APIRouter()
 
 
+def get_booking_or_404(booking_id: int, db: Session):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+
+    if not booking:
+        raise HTTPException(
+            status_code=404,
+            detail="Reserva não encontrada"
+        )
+
+    return booking
+
+
 @router.post("/", response_model=BookingResponse)
 def create_booking(
     booking_data: BookingCreate,
@@ -24,7 +36,7 @@ def create_booking(
 
 @router.get("/", response_model=list[BookingResponse])
 def list_bookings(db: Session = Depends(get_db)):
-    return db.query(Booking).all()
+    return db.query(Booking).order_by(Booking.id.desc()).all()
 
 
 @router.get("/{booking_id}", response_model=BookingResponse)
@@ -32,17 +44,80 @@ def get_booking(
     booking_id: int,
     db: Session = Depends(get_db)
 ):
-    booking = (
-        db.query(Booking)
-        .filter(Booking.id == booking_id)
-        .first()
-    )
+    return get_booking_or_404(booking_id, db)
 
-    if not booking:
-        raise HTTPException(
-            status_code=404,
-            detail="Reserva não encontrada"
-        )
+
+@router.patch("/{booking_id}/confirm", response_model=BookingResponse)
+def confirm_booking(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+    booking = get_booking_or_404(booking_id, db)
+
+    booking.status = "confirmed"
+
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+
+
+@router.patch("/{booking_id}/cancel", response_model=BookingResponse)
+def cancel_booking(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+    booking = get_booking_or_404(booking_id, db)
+
+    booking.status = "cancelled"
+
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+
+
+@router.patch("/{booking_id}/complete", response_model=BookingResponse)
+def complete_booking(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+    booking = get_booking_or_404(booking_id, db)
+
+    booking.status = "completed"
+
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+
+
+@router.patch("/{booking_id}/payment-paid", response_model=BookingResponse)
+def mark_payment_paid(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+    booking = get_booking_or_404(booking_id, db)
+
+    booking.payment_status = "paid"
+
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+
+
+@router.patch("/{booking_id}/payment-pending", response_model=BookingResponse)
+def mark_payment_pending(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+    booking = get_booking_or_404(booking_id, db)
+
+    booking.payment_status = "pending"
+
+    db.commit()
+    db.refresh(booking)
 
     return booking
 
@@ -52,17 +127,7 @@ def delete_booking(
     booking_id: int,
     db: Session = Depends(get_db)
 ):
-    booking = (
-        db.query(Booking)
-        .filter(Booking.id == booking_id)
-        .first()
-    )
-
-    if not booking:
-        raise HTTPException(
-            status_code=404,
-            detail="Reserva não encontrada"
-        )
+    booking = get_booking_or_404(booking_id, db)
 
     db.delete(booking)
     db.commit()
