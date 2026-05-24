@@ -20,6 +20,7 @@ class HomeContent(Base):
 
     featured_title_en = Column(String, default="Featured Rooms")
     featured_title_pt = Column(String, default="Quartos em Destaque")
+    featured_video_url = Column(String, nullable=True)
 
     cta_title_en = Column(String, nullable=True)
     cta_title_pt = Column(String, nullable=True)

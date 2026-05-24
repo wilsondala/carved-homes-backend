@@ -15,6 +15,8 @@ class HomeContentBase(BaseModel):
     featured_title_en: str = "Featured Rooms"
     featured_title_pt: str = "Quartos em Destaque"
 
+    featured_video_url: str | None = None
+
     cta_title_en: str | None = None
     cta_title_pt: str | None = None
 

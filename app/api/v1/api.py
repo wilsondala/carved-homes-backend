@@ -7,8 +7,10 @@ from app.api.v1.bookings import router as bookings_router
 from app.api.v1.reviews import router as reviews_router
 from app.api.v1.payments import router as payments_router
 from app.api.v1.webhooks import router as webhooks_router
+from app.api.v1.analytics import router as analytics_router
 from app.api.v1.home_content import router as home_content_router
 from app.api.v1.site_settings import router as site_settings_router
+from app.api.v1.whatsapp import router as whatsapp_router
 from app.api.v1 import admin_auth
 
 api_router = APIRouter()
@@ -63,4 +65,21 @@ api_router.include_router(
     tags=["Site Settings"]
 )
 
-api_router.include_router(admin_auth.router, prefix="/admin-auth", tags=["Admin Auth"])
+api_router.include_router(
+    analytics_router,
+    prefix="/analytics",
+    tags=["Analytics"]
+)
+
+api_router.include_router(
+    whatsapp_router,
+    prefix="/whatsapp",
+    tags=["WhatsApp"]
+)
+
+api_router.include_router(
+    admin_auth.router, 
+    prefix="/admin-auth",
+    tags=["Admin Auth"]
+)
+

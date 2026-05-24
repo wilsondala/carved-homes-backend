@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.booking import Booking
 from app.schemas.booking import BookingCreate, BookingResponse
+from datetime import timedelta
 
 router = APIRouter()
 
@@ -135,3 +136,27 @@ def delete_booking(
     return {
         "message": "Reserva removida com sucesso"
     }
+@router.get("/unavailable-dates/{room_id}")
+def unavailable_dates(
+    room_id: int,
+    db: Session = Depends(get_db)
+):
+    bookings = (
+        db.query(Booking)
+        .filter(
+            Booking.room_id == room_id,
+            Booking.status != "cancelled"
+        )
+        .all()
+    )
+
+    blocked_dates = []
+
+    for booking in bookings:
+        current = booking.check_in
+
+        while current < booking.check_out:
+            blocked_dates.append(current.isoformat())
+            current += timedelta(days=1)
+
+    return blocked_dates
